@@ -20,12 +20,14 @@ usethis::use_package("metamer")
 usethis::use_package("plotly")
 usethis::use_package("bs4Dash")
 usethis::use_package("sortable")
-
+usethis::use_package("dplyr")
+usethis::use_package("glue")
+usethis::use_pipe()
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module( name = "welcome" ) # Name of the module
-golem::add_module( name = "name_of_module2" ) # Name of the module
+golem::add_module( name = "welcome" )
+golem::add_module( name = "explore", fct = "helpers")
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*

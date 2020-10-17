@@ -37,6 +37,11 @@ app_ui <- function(request) {
             "Welcome",
             tabName = "welcome",
             icon = 'info'
+          ),
+          bs4SidebarMenuItem(
+            "Explore",
+            tabName = "explore",
+            icon = 'search'
           )
         )
       ),
@@ -47,6 +52,10 @@ app_ui <- function(request) {
           bs4TabItem(
             tabName = "welcome",
             mod_welcome_ui("welcome_ui_1")
+          ),
+          bs4TabItem(
+            tabName = "explore",
+            mod_explore_ui("explore_ui_1")
           )
         )
       ),
