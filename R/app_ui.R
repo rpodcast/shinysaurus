@@ -3,14 +3,63 @@
 #' @param request Internal parameter for `{shiny}`. 
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @import bs4Dash
 #' @noRd
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
+    
     # List the first level UI elements here 
-    fluidPage(
-      h1("shinysaurus")
+    bs4DashPage(
+      title = "ShinySaurus",
+      sidebar_collapsed = FALSE,
+      
+      # navigation bar
+      navbar = bs4DashNavbar(
+        skin = "dark",
+        status = "primary"
+      ),
+      
+      # left sidebar
+      sidebar = bs4DashSidebar(
+        skin = "dark",
+        status = "primary",
+        title = "ShinySaurus",
+        brandColor = "primary",
+        #src = "some_image.png",
+        elevation = 3,
+        opacity = 0.8,
+        
+        # left sidebar menu
+        bs4SidebarMenu(
+          bs4SidebarMenuItem(
+            "Welcome",
+            tabName = "welcome",
+            icon = 'info'
+          )
+        )
+      ),
+      
+      # main body
+      body = bs4DashBody(
+        bs4TabItems(
+          bs4TabItem(
+            tabName = "welcome",
+            mod_welcome_ui("welcome_ui_1")
+          )
+        )
+      ),
+      
+      # footer
+      footer = bs4DashFooter(
+        copyrights = a(
+          href = "https://r-podcast.org",
+          target = "_blank",
+          "The R-Podcast"
+        ),
+        right_text = "2020"
+      )
     )
   )
 }
