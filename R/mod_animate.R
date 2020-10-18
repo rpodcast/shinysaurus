@@ -45,41 +45,6 @@ mod_animate_ui <- function(id){
           closeable = FALSE,
           fluidRow(
             col_6(
-              # selectInput(
-              #   ns("start_set"),
-              #   label = "Select starting set",
-              #   choices = ds_choices,
-              #   selected = ds_choices[1]
-              # ),
-              # selectInput(
-              #   ns("end_set"),
-              #   label = "select ending set",
-              #   choices = ds_choices,
-              #   selected = ds_choices[2]
-              # )
-              # selectizeInput(
-              #   ns("data_order"),
-              #   label = "Customize the data order",
-              #   choices = unique(datasauRus::datasaurus_dozen$dataset),
-              #   selected = unique(datasauRus::datasaurus_dozen$dataset),
-              #   multiple = TRUE,
-              #   options = list(plugins = list('drag_drop', 'remove_button')),
-              #   width = '100%'
-              # )
-              # shinyjqui::orderInput(
-              #   ns("data_source"),
-              #   label = "Drag from here",
-              #   items = unique(datasauRus::datasaurus_dozen$dataset),
-              #   as_source = FALSE,
-              #   connect = ns("data_dest")
-              # ),
-              # shinyjqui::orderInput(
-              #   ns("data_dest"),
-              #   label = "Drag to here",
-              #   items = NULL,
-              #   as_source = FALSE,
-              #   connect = ns("data_source")
-              # )
               bucket_list(
                 header = NULL,
                 group_name = ns("bucket_list_group"),
@@ -185,21 +150,6 @@ mod_animate_ui <- function(id){
   )
 }
 
-# metamers <- metamerize(start_data, 
-#                        preserve = delayed_with(mean(x), mean(y), cor(x, y)),
-#                        minimize = mean_dist_to(star), 
-#                        perturbation = 0.08,
-#                        N = 30000,
-#                        trim = 150) %>% 
-#   metamerize(minimize = NULL, 
-#              N = 3000, trim = 10) %>% 
-#   metamerize(minimize = mean_dist_to(X), 
-#              N = 30000, trim = 150) %>% 
-#   metamerize(minimize = NULL, 
-#              N = 3000, trim = 10) %>% 
-#   metamerize(minimize = mean_dist_to(start_data),
-#              N = 30000, trim = 150)
-
 #' animate Server Function
 #'
 #' @noRd 
@@ -213,19 +163,6 @@ mod_animate_server <- function(input, output, session){
   # assemble settings and perform animation building
   observeEvent(input$save_settings, {
     
-    # check if the two selected sets are the same
-    # if (input$start_set == input$end_set) {
-    #   shinyWidgets::show_alert(
-    #     title = "Uh Oh!",
-    #     text = "Please select 2 different sets!",
-    #     type = "error",
-    #     btn_labels = "Ok, got it",
-    #     closeOnClickOutside = FALSE,
-    #     showCloseButton = FALSE
-    #   )
-    #   
-    #   return(NULL)
-    # }
     # check if at least two data sets have been dragged over
     if (is.null(input$rank_list_2) || length(input$rank_list_2) < 2) {
       shinyWidgets::show_alert(

@@ -180,7 +180,6 @@ mod_explore_server <- function(input, output, session){
       res <- data_df()
     } else {
       res <- df_sub()
-      #res <- dplyr::slice(data_df(), df_rows())
     }
     return(res)
   },
