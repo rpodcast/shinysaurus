@@ -1,16 +1,28 @@
 #' Render a single datasauRus graph in plotly
 #'
 #' @param df data frame corresponding to a single dataset
+#' @param register_select flag select event in plotly
 #' @param ... additional params that might be used later
 #' @return plotly object
 #' @export
 #' @import plotly
-render_data_graph <- function(df) {
-  base <- plot_ly(df, x = ~x, y = ~y) %>%
-    layout(
-      xaxis = list(range = c(0, 100)),
-      yaxis = list(range = c(0, 100))
-    )
+render_data_graph <- function(df, register_select = TRUE, ...) {
+  base <- plot_ly(
+    df, 
+    x = ~x, 
+    y = ~y,
+    customdata = seq(1, nrow(df)),
+    source = "A"
+  ) %>%
+  layout(
+    xaxis = list(range = c(0, 100)),
+    yaxis = list(range = c(0, 100)),
+    dragmode = "select"
+  )
+  
+  if (register_select) {
+    base <- event_register(base, "plotly_selecting")
+  }
   
   return(base)
 }

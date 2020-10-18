@@ -69,7 +69,8 @@ mod_explore_ui <- function(id){
           
           fluidRow(
             col_6(
-              plotly::plotlyOutput(ns("ds_plot"), height = "600px")
+              plotly::plotlyOutput(ns("ds_plot"), height = "600px"),
+              verbatimTextOutput(ns("info"))
             ),
             col_6(
               DT::dataTableOutput(ns("ds_table"))
@@ -87,45 +88,60 @@ mod_explore_ui <- function(id){
 mod_explore_server <- function(input, output, session){
   ns <- session$ns
   
+  # keep track of which rows
+  df_rows <- reactiveVal(NULL)
+  df_sub <- reactiveVal(NULL)
+  
   # reactive for data frame selected
   data_df <- reactive({
     req(input$data_select)
-    df <- datasauRus::datasaurus_dozen
-    
-    res <- df %>%
-      dplyr::filter(dataset == input$data_select) %>%
-      dplyr::select(., -dataset)
-    
-    return(res)
+    extract_dataset(input$data_select)
   })
+  
+  
   
   # render the info boxes
   output$box_x <- renderbs4InfoBox({
     req(data_df())
+    if (!is.null(df_sub())) {
+      df <- df_sub()
+    } else {
+      df <- data_df()
+    }
     bs4InfoBox(
       title = "Mean (SD) of X",
       gradientColor = "success",
-      value = mean_sd_print(data_df(), "x"),
+      value = mean_sd_print(df, "x"),
       icon = icon("bar-chart-o")
     )
   })
   
   output$box_y <- renderbs4InfoBox({
     req(data_df())
+    if (!is.null(df_sub())) {
+      df <- df_sub()
+    } else {
+      df <- data_df()
+    }
     bs4InfoBox(
       title = "Mean (SD) of Y",
       gradientColor = "success",
-      value = mean_sd_print(data_df(), "y"),
+      value = mean_sd_print(df, "y"),
       icon = icon("bar-chart-o")
     )
   })
   
   output$box_cor <- renderbs4InfoBox({
     req(data_df())
+    if (!is.null(df_sub())) {
+      df <- df_sub()
+    } else {
+      df <- data_df()
+    }
     bs4InfoBox(
       title = "Correlation",
       gradientColor = "primary",
-      value = round(cor(x = data_df()$x, y = data_df()$y), 2),
+      value = round(cor(x = df$x, y = df$y), 2),
       icon = icon("bar-chart-o")
     )
   })
@@ -146,11 +162,41 @@ mod_explore_server <- function(input, output, session){
     render_data_graph(data_df())
   })
   
+  output$info <- renderPrint({
+    tmp <- plotly::event_data("plotly_selected", source = "A")
+    if (is.null(tmp)) {
+      df_sub(NULL)
+    }
+    print("Hi there!")
+  })
+  
+  # On hover, the key field of the event data contains the car name
+  # Add that name to the set of all "selected" cars
+  observeEvent(event_data("plotly_selected", source = "A"), {
+    
+    df_rows_sel <- event_data("plotly_selected")$customdata
+    df_rows(df_rows_sel)
+    
+    if (is.null(df_rows_sel)) {
+      df_sub(NULL)
+    } else {
+      df_filtered <- dplyr::slice(data_df(), df_rows_sel)
+      df_sub(df_filtered)
+    }
+    
+  })
+  
   output$ds_table <- DT::renderDataTable({
     req(data_df())
-    data_df()
+    
+    if (is.null(df_rows())) {
+      res <- data_df()
+    } else {
+      res <- dplyr::slice(data_df(), df_rows())
+    }
+    return(res)
   },
-  rownames = FALSE,
+  rownames = TRUE,
   options = list(dom = 'tp')
   )
  

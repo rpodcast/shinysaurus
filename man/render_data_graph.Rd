@@ -4,10 +4,12 @@
 \alias{render_data_graph}
 \title{Render a single datasauRus graph in plotly}
 \usage{
-render_data_graph(df)
+render_data_graph(df, register_select = TRUE, ...)
 }
 \arguments{
 \item{df}{data frame corresponding to a single dataset}
+
+\item{register_select}{flag select event in plotly}
 
 \item{...}{additional params that might be used later}
 }
