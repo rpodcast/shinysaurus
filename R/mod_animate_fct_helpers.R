@@ -44,10 +44,12 @@ render_animation_graph <- function(metamer_df, metamer_sum, frame = 100) {
 #'
 #' @return a metamer list object (list of data frames)
 #' @import metamer
+#' @import dplyr
 #' @export
 create_metamers <- function(datasets, perturbation = 0.08, N = 30000, trim = 150, ...) {
   # obtain the first and last elements of datasets
   first_dataset <- datasets[1]
+  second_dataset <- datasets[2]
   last_dataset <- datasets[length(datasets)]
   
   
@@ -85,26 +87,42 @@ create_metamers <- function(datasets, perturbation = 0.08, N = 30000, trim = 150
   # X$dataset <- NULL
   
   # derive first set of metamers
-  df <- extract_dataset(first_dataset)
+  df1 <- extract_dataset(first_dataset)
+  df2 <- extract_dataset(second_dataset)
   
   metamers <- metamerize(
-    #data = extract_dataset(first_dataset),
-    data = df,
+    data = df1,
     preserve = delayed_with(mean(x), mean(y), cor(x, y)),
-    minimize = mean_dist_to(extract_dataset(datasets[2])),
+    minimize = mean_dist_to(df2),
     perturbation = perturbation,
     N = N,
     trim = trim)
-
+  
+  
   # create additional metamers if we have more than 2 datasets
   if (length(datasets) > 2) {
     # extract the 3rd or more dataset names
     remaining_datasets <- datasets[3:length(datasets)]
     
     for (ds in remaining_datasets) {
-      metamers <- metamerize(metamers, minimize = NULL, N = N / 10, trim = 10)
-      df <- extract_dataset(ds)
-      metamers <- metamerize(metamers, minimize = mean_dist_to(df), N = N, trim = trim)
+      start_df <- metamers[[length(metamers)]]
+      metamers_tmp <- metamerize(
+        data = start_df, 
+        preserve = delayed_with(mean(x), mean(y), cor(x, y)),
+        minimize = NULL, 
+        perturbation = perturbation,
+        N = N / 10, 
+        trim = 10
+      )
+      
+      target_df <- extract_dataset(ds)
+      metamers <- metamerize(
+        data = metamers_tmp[[length(metamers_tmp)]],
+        preserve = delayed_with(mean(x), mean(y), cor(x, y)),
+        minimize = mean_dist_to(target_df),
+        perturbation = perturbation,
+        N = N,
+        trim = trim)
     }
   }
   

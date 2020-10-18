@@ -45,18 +45,18 @@ mod_animate_ui <- function(id){
           closeable = FALSE,
           fluidRow(
             col_4(
-              selectInput(
-                ns("start_set"),
-                label = "Select starting set",
-                choices = ds_choices,
-                selected = ds_choices[1]
-              ),
-              selectInput(
-                ns("end_set"),
-                label = "select ending set",
-                choices = ds_choices,
-                selected = ds_choices[2]
-              )
+              # selectInput(
+              #   ns("start_set"),
+              #   label = "Select starting set",
+              #   choices = ds_choices,
+              #   selected = ds_choices[1]
+              # ),
+              # selectInput(
+              #   ns("end_set"),
+              #   label = "select ending set",
+              #   choices = ds_choices,
+              #   selected = ds_choices[2]
+              # )
               # selectizeInput(
               #   ns("data_order"),
               #   label = "Customize the data order",
@@ -80,20 +80,20 @@ mod_animate_ui <- function(id){
               #   as_source = FALSE,
               #   connect = ns("data_source")
               # )
-              # bucket_list(
-              #   header = NULL,
-              #   group_name = ns("bucket_list_group"),
-              #   orientation = "horizontal",
-              #   add_rank_list(
-              #     input_id = ns("rank_list_1"),
-              #     text = "Drag from here",
-              #     labels = as.list(unique(datasauRus::datasaurus_dozen$dataset))
-              #   ),
-              #   add_rank_list(
-              #     input_id = ns("rank_list_2"),
-              #     text = "To here"
-              #   )
-              # )
+              bucket_list(
+                header = NULL,
+                group_name = ns("bucket_list_group"),
+                orientation = "horizontal",
+                add_rank_list(
+                  input_id = ns("rank_list_1"),
+                  text = "Drag from here",
+                  labels = as.list(ds_choices)
+                ),
+                add_rank_list(
+                  input_id = ns("rank_list_2"),
+                  text = "To here"
+                )
+              )
             ),
             col_4(
               numericInput(
@@ -204,23 +204,10 @@ mod_animate_server <- function(input, output, session){
   observeEvent(input$save_settings, {
     
     # check if the two selected sets are the same
-    if (input$start_set == input$end_set) {
-      shinyWidgets::show_alert(
-        title = "Uh Oh!",
-        text = "Please select 2 different sets!",
-        type = "error",
-        btn_labels = "Ok, got it",
-        closeOnClickOutside = FALSE,
-        showCloseButton = FALSE
-      )
-      
-      return(NULL)
-    }
-    # check if at least two data sets have been dragged over
-    # if (is.null(input$rank_list_2) || length(input$rank_list_2) < 2) {
+    # if (input$start_set == input$end_set) {
     #   shinyWidgets::show_alert(
     #     title = "Uh Oh!",
-    #     text = "Please drag over at least 2 data sets.",
+    #     text = "Please select 2 different sets!",
     #     type = "error",
     #     btn_labels = "Ok, got it",
     #     closeOnClickOutside = FALSE,
@@ -229,12 +216,19 @@ mod_animate_server <- function(input, output, session){
     #   
     #   return(NULL)
     # }
-    
-    first_dataset <- extract_dataset(input$start_set)
-    second_dataset <- extract_dataset(input$end_set)
-    perturbation = input$perturbation
-    N = input$n_metamer
-    trim = input$trim
+    # check if at least two data sets have been dragged over
+    if (is.null(input$rank_list_2) || length(input$rank_list_2) < 2) {
+      shinyWidgets::show_alert(
+        title = "Uh Oh!",
+        text = "Please drag over at least 2 data sets.",
+        type = "error",
+        btn_labels = "Ok, got it",
+        closeOnClickOutside = FALSE,
+        showCloseButton = FALSE
+      )
+
+      return(NULL)
+    }
     
     # show modal to say something is happening
     shinyalert::shinyalert(
@@ -253,13 +247,22 @@ mod_animate_server <- function(input, output, session){
       animation = TRUE
     )
     
-    metamers <- metamerize(
-      data = first_dataset,
-      preserve = delayed_with(mean(x), mean(y), cor(x, y)),
-      minimize = mean_dist_to(second_dataset),
-      perturbation = perturbation,
-      N = N,
-      trim = trim)
+    # first_dataset <- extract_dataset(input$start_set)
+    # second_dataset <- extract_dataset(input$end_set)
+    # perturbation = input$perturbation
+    # N = input$n_metamer
+    # trim = input$trim
+    # 
+    # metamers <- metamerize(
+    #   data = first_dataset,
+    #   preserve = delayed_with(mean(x), mean(y), cor(x, y)),
+    #   minimize = mean_dist_to(second_dataset),
+    #   perturbation = perturbation,
+    #   N = N,
+    #   trim = trim)
+    
+    metamers <- create_metamers(input$rank_list_2)
+
     
     meta2 <- as.data.frame(metamers)
     
