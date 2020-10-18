@@ -9,6 +9,33 @@ extract_dataset <- function(dataset) {
   return(df)
 }
 
+#' Create plotly version of animation
+#'
+#' @param metamer_df tidy data frame of metamer transition frames
+#' @param metamer_sum tidy data frame of metamer summary statistics
+#' @param frame amount of time between frames (in milliseconds)
+#'
+#' @return plotly object
+#' @export
+#' @import plotly
+render_animation_graph <- function(metamer_df, metamer_sum, frame = 100) {
+  base <- plot_ly(metamer_df,  x = ~x, y = ~y) %>%
+    add_markers(frame = ~.metamer) %>%
+    add_text(x = 90, y = 95, frame = ~.metamer, text = ~mean_x_print, data = metamer_sum, showlegend = FALSE) %>%
+    add_text(x = 90, y = 93, frame = ~.metamer, text = ~mean_y_print, data = metamer_sum, showlegend = FALSE) %>%
+    add_text(x = 90, y = 91, frame = ~.metamer, text = ~cor_xy_print, data = metamer_sum, showlegend = FALSE) %>%
+    layout(
+      xaxis = list(range = c(0, 100)),
+      yaxis = list(range = c(0, 100))
+    )
+  
+  base %>%
+    animation_opts(frame = frame, easing = "linear", redraw = FALSE) %>%
+    animation_button(
+      x = 1, xanchor = "right", y = 0, yanchor = "bottom"
+    )
+}
+
 #' Create a series of metamer data sets
 #'
 #' @param datasets vector of data sets

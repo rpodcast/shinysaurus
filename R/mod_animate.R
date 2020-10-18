@@ -10,7 +10,7 @@
 #' @import bs4Dash 
 #' @import sortable
 #' @import metamer
-#' @import plotly
+#' @import dplyr
 mod_animate_ui <- function(id){
   ns <- NS(id)
   
@@ -183,6 +183,7 @@ mod_animate_server <- function(input, output, session){
   
   # set up reactive values
   metamer_df <- reactiveVal(NULL)
+  metamer_sum <- reactiveVal(NULL)
   
   # assemble settings and perform animation building
   observeEvent(input$save_settings, {
@@ -246,7 +247,21 @@ mod_animate_server <- function(input, output, session){
       trim = trim)
     
     meta2 <- as.data.frame(metamers)
+    
+    meta_sum <- tibble::as_tibble(meta2) %>%
+      group_by(.metamer) %>%
+      summarize(
+        mean_x = mean(x),
+        mean_x_print = glue::glue("Mean(X) = {round(mean_x, 2)}"),
+        mean_y = mean(y),
+        mean_y_print = glue::glue("Mean(Y) = {round(mean_y, 2)}"),
+        cor_xy = cor(x, y),
+        cor_xy_print = glue::glue("Cor(X,Y) = {round(cor_xy, 2)}")
+      ) %>%
+      ungroup
+    
     metamer_df(meta2)
+    metamer_sum(meta_sum)
     
     shinyalert::closeAlert()
     # browser()
@@ -289,24 +304,29 @@ mod_animate_server <- function(input, output, session){
     # }
   })
   
-  # debugging
-  output$debug <- renderPrint({
-  
-    req(input$rank_list_2)
-    input$rank_list_2
-  })
-  
   # animation plot
   output$animate_plot <- plotly::renderPlotly({
     req(metamer_df())
-    base <- plot_ly(metamer_df(),  x = ~x, y = ~y) %>%
-      add_markers(frame = ~.metamer)
+    req(metamer_sum())
     
-    base %>%
-      animation_opts(frame = 100, easing = "linear", redraw = FALSE) %>%
-      animation_button(
-        x = 1, xanchor = "right", y = 0, yanchor = "bottom"
-      )
+    render_animation_graph(metamer_df(), metamer_sum())
+    
+    # base <- plot_ly(metamer_df(),  x = ~x, y = ~y) %>%
+    #   add_markers(frame = ~.metamer) %>%
+    #   add_text(x = 90, y = 95, frame = ~.metamer, text = ~mean_x_print, data = metamer_sum(), showlegend = FALSE) %>%
+    #   add_text(x = 90, y = 93, frame = ~.metamer, text = ~mean_y_print, data = metamer_sum(), showlegend = FALSE) %>%
+    #   add_text(x = 90, y = 91, frame = ~.metamer, text = ~cor_xy_print, data = metamer_sum(), showlegend = FALSE) %>%
+    #   #add_text(x = 95, y = 95, text = "Hello") %>%
+    #   layout(
+    #     xaxis = list(range = c(0, 100)),
+    #     yaxis = list(range = c(0, 100))
+    #   )
+    # 
+    # base %>%
+    #   animation_opts(frame = 100, easing = "linear", redraw = FALSE) %>%
+    #   animation_button(
+    #     x = 1, xanchor = "right", y = 0, yanchor = "bottom"
+    #   )
     
   })
 }
