@@ -42,6 +42,11 @@ app_ui <- function(request) {
             "Explore",
             tabName = "explore",
             icon = 'search'
+          ),
+          bs4SidebarMenuItem(
+            "Animate",
+            tabName = "animate",
+            icon = 'search'
           )
         )
       ),
@@ -56,6 +61,10 @@ app_ui <- function(request) {
           bs4TabItem(
             tabName = "explore",
             mod_explore_ui("explore_ui_1")
+          ),
+          bs4TabItem(
+            tabName = "animate",
+            mod_animate_ui("animate_ui_1")
           )
         )
       ),
@@ -92,7 +101,8 @@ golem_add_external_resources <- function(){
     bundle_resources(
       path = app_sys('app/www'),
       app_title = 'shinysaurus'
-    )
+    ),
+    shinyalert::useShinyalert()
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
   )

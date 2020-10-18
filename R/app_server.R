@@ -7,5 +7,6 @@
 app_server <- function( input, output, session ) {
   # List the first level callModules here
   callModule(mod_explore_server, "explore_ui_1")
+  callModule(mod_animate_server, "animate_ui_1")
 
 }

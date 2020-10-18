@@ -22,12 +22,17 @@ usethis::use_package("bs4Dash")
 usethis::use_package("sortable")
 usethis::use_package("dplyr")
 usethis::use_package("glue")
+usethis::use_package("shinyjqui")
+usethis::use_package("shinyWidgets")
+usethis::use_package("shinyalert")
 usethis::use_pipe()
 
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module( name = "welcome" )
 golem::add_module( name = "explore", fct = "helpers")
+golem::add_module( name = "animate", fct = "helpers")
+
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*

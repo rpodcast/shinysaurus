@@ -20,7 +20,6 @@ mod_explore_ui <- function(id){
           inputId = ns("doc_card"),
           title = "About this UI",
           status = "primary",
-          gradientColor = "primary",
           solidHeader = TRUE,
           width = 12,
           collapsible = TRUE,
