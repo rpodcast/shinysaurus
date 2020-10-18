@@ -18,7 +18,9 @@ Imports:
     magrittr,
     glue,
     shinyjqui,
-    shinyWidgets
+    shinyWidgets,
+    pkgload,
+    shinyalert
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
