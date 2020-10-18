@@ -18,7 +18,8 @@ mod_welcome_ui <- function(id){
           title = "Welcome to ShinySaurus!",
           lead = includeMarkdown(app_sys("app", "docs", "welcome.md")),
           btn_name = "Visit GitHub Repository",
-          href = "https://github.com/rpodcast/shinysaurus"
+          href = "https://github.com/rpodcast/shinysaurus",
+          status = "success"
         )
       )
     ),
