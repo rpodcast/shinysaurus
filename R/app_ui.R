@@ -41,12 +41,12 @@ app_ui <- function(request) {
           bs4SidebarMenuItem(
             "Explore",
             tabName = "explore",
-            icon = 'search'
+            icon = 'chart-line'
           ),
           bs4SidebarMenuItem(
             "Animate",
             tabName = "animate",
-            icon = 'search'
+            icon = 'chalkboard-teacher'
           )
         )
       ),

@@ -112,7 +112,7 @@ mod_explore_server <- function(input, output, session){
       title = "Mean (SD) of X",
       gradientColor = "success",
       value = mean_sd_print(df, "x"),
-      icon = icon("bar-chart-o")
+      icon = "table"
     )
   })
   
@@ -127,7 +127,7 @@ mod_explore_server <- function(input, output, session){
       title = "Mean (SD) of Y",
       gradientColor = "success",
       value = mean_sd_print(df, "y"),
-      icon = icon("bar-chart-o")
+      icon = "table"
     )
   })
   
@@ -142,7 +142,7 @@ mod_explore_server <- function(input, output, session){
       title = "Correlation",
       gradientColor = "primary",
       value = round(cor(x = df$x, y = df$y), 2),
-      icon = icon("bar-chart-o")
+      icon = "table"
     )
   })
   
