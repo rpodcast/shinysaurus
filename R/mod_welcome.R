@@ -25,6 +25,17 @@ mod_welcome_ui <- function(id){
     
     # Acknowledgments
     fluidRow(
+      col_12(
+        bs4Callout(
+          title = "Thank you!",
+          width = 12,
+          status = "primary",
+          "This application would not be possible without the brilliant R Community!"
+        )
+      )
+    ),
+    
+    fluidRow(
       col_4(
         bs4UserCard(
           title = "Eric Nantz",
@@ -175,7 +186,7 @@ mod_welcome_ui <- function(id){
       col_4(
         bs4UserCard(
           title = "John (JP) Coene",
-          subtitle = "waiter package author",
+          subtitle = "waiter & tippy package author",
           status = "info",
           width = 12,
           src = "www/john_coene.jpeg",
