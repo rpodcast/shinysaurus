@@ -68,11 +68,11 @@ mod_explore_ui <- function(id){
           ),
           
           fluidRow(
-            col_6(
+            col_8(
               plotly::plotlyOutput(ns("ds_plot"), height = "600px"),
               verbatimTextOutput(ns("info"))
             ),
-            col_6(
+            col_4(
               DT::dataTableOutput(ns("ds_table"))
             )
           )
@@ -97,8 +97,6 @@ mod_explore_server <- function(input, output, session){
     req(input$data_select)
     extract_dataset(input$data_select)
   })
-  
-  
   
   # render the info boxes
   output$box_x <- renderbs4InfoBox({
@@ -146,16 +144,6 @@ mod_explore_server <- function(input, output, session){
     )
   })
   
-  # output$mean_box <- renderbs4InfoBox({
-  #   req(data_df())
-  #   bs4InfoBox(
-  #     title = "Mean of X",
-  #     gradientColor = "success",
-  #     value = mean_sd_print(data_df()),
-  #     icon = "chart"
-  #   )
-  # })
-  
   # render interactive graph via plotly
   output$ds_plot <- plotly::renderPlotly({
     req(data_df())
@@ -170,8 +158,7 @@ mod_explore_server <- function(input, output, session){
     print("Hi there!")
   })
   
-  # On hover, the key field of the event data contains the car name
-  # Add that name to the set of all "selected" cars
+  # obtain rows selected in plotly chart and update reactive value
   observeEvent(event_data("plotly_selected", source = "A"), {
     
     df_rows_sel <- event_data("plotly_selected")$customdata
@@ -189,15 +176,16 @@ mod_explore_server <- function(input, output, session){
   output$ds_table <- DT::renderDataTable({
     req(data_df())
     
-    if (is.null(df_rows())) {
+    if (is.null(df_sub())) {
       res <- data_df()
     } else {
-      res <- dplyr::slice(data_df(), df_rows())
+      res <- df_sub()
+      #res <- dplyr::slice(data_df(), df_rows())
     }
     return(res)
   },
-  rownames = TRUE,
-  options = list(dom = 'tp')
+  rownames = FALSE,
+  options = list(dom = 'tip')
   )
  
 }
