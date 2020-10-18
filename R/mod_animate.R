@@ -44,7 +44,7 @@ mod_animate_ui <- function(id){
           collapsed = FALSE,
           closeable = FALSE,
           fluidRow(
-            col_4(
+            col_6(
               # selectInput(
               #   ns("start_set"),
               #   label = "Select starting set",
@@ -167,6 +167,16 @@ mod_animate_ui <- function(id){
           fluidRow(
             col_8(
               plotly::plotlyOutput(ns("animate_plot"), height = "1000px")
+            ),
+            col_4(
+              numericInput(
+                ns("frame"),
+                "Time between frames (milliseconds)",
+                value = 100,
+                min = 50,
+                max = 1000,
+                step = 10
+              )
             )
           )
         )
@@ -247,23 +257,7 @@ mod_animate_server <- function(input, output, session){
       animation = TRUE
     )
     
-    # first_dataset <- extract_dataset(input$start_set)
-    # second_dataset <- extract_dataset(input$end_set)
-    # perturbation = input$perturbation
-    # N = input$n_metamer
-    # trim = input$trim
-    # 
-    # metamers <- metamerize(
-    #   data = first_dataset,
-    #   preserve = delayed_with(mean(x), mean(y), cor(x, y)),
-    #   minimize = mean_dist_to(second_dataset),
-    #   perturbation = perturbation,
-    #   N = N,
-    #   trim = trim)
-    
     metamers <- create_metamers(input$rank_list_2)
-
-    
     meta2 <- as.data.frame(metamers)
     
     meta_sum <- tibble::as_tibble(meta2) %>%
@@ -282,44 +276,6 @@ mod_animate_server <- function(input, output, session){
     metamer_sum(meta_sum)
     
     shinyalert::closeAlert()
-    # browser()
-    # #debugonce(create_metamers)
-    # # res <- create_metamers(
-    #   datasets = input$rank_list_2
-    #   perturbation = input$perturbation
-    #   N = input$n_metamer
-    #   trim = input$trim
-    # # )
-    # 
-    # # obtain the first and last elements of datasets
-    # first_dataset <- datasets[1]
-    # last_dataset <- datasets[length(datasets)]
-    # 
-    # # derive first set of metamers
-    # df <- extract_dataset(first_dataset)
-    # df2 <- extract_dataset(datasets[2])
-    # 
-    # debug(mean_dist_to)
-    # metamers <- metamerize(
-    #   #data = extract_dataset(first_dataset),
-    #   data = df,
-    #   preserve = delayed_with(mean(x), mean(y), cor(x, y)),
-    #   minimize = mean_dist_to(df2),
-    #   perturbation = perturbation,
-    #   N = N,
-    #   trim = trim)
-    # 
-    # # create additional metamers if we have more than 2 datasets
-    # if (length(datasets) > 2) {
-    #   # extract the 3rd or more dataset names
-    #   remaining_datasets <- datasets[3:length(datasets)]
-    #   
-    #   for (ds in remaining_datasets) {
-    #     metamers <- metamerize(metamers, minimize = NULL, N = N / 10, trim = 10)
-    #     df2 <- extract_dataset(ds)
-    #     metamers <- metamerize(metamers, minimize = mean_dist_to(!!!df), N = N, trim = trim)
-    #   }
-    # }
   })
   
   # animation plot
@@ -327,25 +283,7 @@ mod_animate_server <- function(input, output, session){
     req(metamer_df())
     req(metamer_sum())
     
-    render_animation_graph(metamer_df(), metamer_sum())
-    
-    # base <- plot_ly(metamer_df(),  x = ~x, y = ~y) %>%
-    #   add_markers(frame = ~.metamer) %>%
-    #   add_text(x = 90, y = 95, frame = ~.metamer, text = ~mean_x_print, data = metamer_sum(), showlegend = FALSE) %>%
-    #   add_text(x = 90, y = 93, frame = ~.metamer, text = ~mean_y_print, data = metamer_sum(), showlegend = FALSE) %>%
-    #   add_text(x = 90, y = 91, frame = ~.metamer, text = ~cor_xy_print, data = metamer_sum(), showlegend = FALSE) %>%
-    #   #add_text(x = 95, y = 95, text = "Hello") %>%
-    #   layout(
-    #     xaxis = list(range = c(0, 100)),
-    #     yaxis = list(range = c(0, 100))
-    #   )
-    # 
-    # base %>%
-    #   animation_opts(frame = 100, easing = "linear", redraw = FALSE) %>%
-    #   animation_button(
-    #     x = 1, xanchor = "right", y = 0, yanchor = "bottom"
-    #   )
-    
+    render_animation_graph(metamer_df(), metamer_sum(), frame = input$frame)
   })
 }
     

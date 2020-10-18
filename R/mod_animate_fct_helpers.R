@@ -52,40 +52,6 @@ create_metamers <- function(datasets, perturbation = 0.08, N = 30000, trim = 150
   second_dataset <- datasets[2]
   last_dataset <- datasets[length(datasets)]
   
-  
-  
-  # start_data <- subset(datasauRus::datasaurus_dozen, dataset == "dino")
-  # start_data$dataset <- NULL
-  
-  # X <- subset(datasauRus::datasaurus_dozen, dataset == "x_shape")
-  # X$dataset <- NULL
-  # 
-  # star <- subset(datasauRus::datasaurus_dozen, dataset == "star")
-  # star$dataset <- NULL
-  
-  
-  # metamers <- metamerize(start_data, 
-  #                        preserve = delayed_with(mean(x), mean(y), cor(x, y)),
-  #                        minimize = mean_dist_to(smiley), 
-  #                        perturbation = 0.08,
-  #                        N = 30000,
-  #                        trim = 150) %>% 
-  #   metamerize(minimize = NULL, 
-  #              N = 3000, trim = 10) %>% 
-  #   metamerize(minimize = mean_dist_to(X), 
-  #              N = 30000, trim = 150) %>% 
-  #   metamerize(minimize = NULL, 
-  #              N = 3000, trim = 10) %>% 
-  #   metamerize(minimize = mean_dist_to(star), 
-  #              N = 30000, trim = 150) %>%
-  #   metamerize(minimize = NULL, 
-  #              N = 3000, trim = 10) %>% 
-  #   metamerize(minimize = mean_dist_to(start_data),
-  #              N = 30000, trim = 150)
-  
-  # X <- subset(datasauRus::datasaurus_dozen, dataset == "x_shape")
-  # X$dataset <- NULL
-  
   # derive first set of metamers
   df1 <- extract_dataset(first_dataset)
   df2 <- extract_dataset(second_dataset)
@@ -98,13 +64,25 @@ create_metamers <- function(datasets, perturbation = 0.08, N = 30000, trim = 150
     N = N,
     trim = trim)
   
-  
   # create additional metamers if we have more than 2 datasets
+  # TODO: I got pretty close but following needs to happen
+  # - store all of the looped versions of the metamers data frames in a list
+  # - manually fix the .metamer column so that we properly "roll" the count
+  #   as the data sets are generated. Need to keep track of the total
   if (length(datasets) > 2) {
+    
     # extract the 3rd or more dataset names
     remaining_datasets <- datasets[3:length(datasets)]
     
+    # establish list to store all data frame version of results
+    meta_list <- vector("list", length(remaining_datasets))
+    names(meta_list) <- remaining_datasets
+    loop_n_trim <- 10 + trim
+    
     for (ds in remaining_datasets) {
+      message(ds)
+      
+      
       start_df <- metamers[[length(metamers)]]
       metamers_tmp <- metamerize(
         data = start_df, 
@@ -114,15 +92,20 @@ create_metamers <- function(datasets, perturbation = 0.08, N = 30000, trim = 150
         N = N / 10, 
         trim = 10
       )
+      metamers_tmpdf <- as.data.frame(metamers_tmp)
       
       target_df <- extract_dataset(ds)
-      metamers <- metamerize(
+      metamers_tmp2 <- metamerize(
         data = metamers_tmp[[length(metamers_tmp)]],
         preserve = delayed_with(mean(x), mean(y), cor(x, y)),
         minimize = mean_dist_to(target_df),
         perturbation = perturbation,
         N = N,
         trim = trim)
+      
+      #metamers_tmp2df <- as.data.frame(metamers_tmp2)
+      #metamers_tmpdf_all <- dplyr::bind_rows(metamers_tmpdf, metamers_tmp2df)
+      #metamers <- c(metamers, metamers_tmp, metamers_tmp2)
     }
   }
   
