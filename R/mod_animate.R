@@ -104,6 +104,11 @@ mod_animate_ui <- function(id){
                 max = 50000,
                 step = 1
               ),
+              tippy::tippy_this(
+                ns("n_metamer"),
+                tooltip = "Values above 30,000 may take a long time!",
+                placement = "right"
+              ),
               numericInput(
                 ns("perturbation"),
                 label = "Perturbation",
@@ -112,12 +117,22 @@ mod_animate_ui <- function(id){
                 max = 1,
                 step = 0.01
               ),
+              tippy::tippy_this(
+                ns("perturbation"),
+                tooltip = "Magnitude of the slight change made to data",
+                placement = "right"
+              ),
               numericInput(
                 ns("trim"),
                 label = "Maximum metamers",
                 value = 150,
                 min = 10,
                 max = 300
+              ),
+              tippy::tippy_this(
+                ns("trim"),
+                tooltip = "Larger values may slow down the animation!",
+                placement = "right"
               ),
               shinyWidgets::actionBttn(
                 ns("save_settings"),
