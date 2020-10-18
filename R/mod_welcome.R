@@ -129,7 +129,7 @@ mod_welcome_ui <- function(id){
       )
     ),
     fluidRow(
-      col_4(
+      col_3(
         bs4UserCard(
           title = "David Granjon",
           subtitle = "bs4Dash package author",
@@ -156,7 +156,39 @@ mod_welcome_ui <- function(id){
           )
         )
       ),
-      col_4(
+      col_3(
+        bs4UserCard(
+          title = "Colin Fay",
+          subtitle = "golem package author",
+          status = "info",
+          width = 12,
+          src = "www/colin_fay.jpeg",
+          bs4ListGroup(
+            width = 12,
+            bs4ListGroupItem(
+              "Engineering Production Shiny Apps",
+              type = "action",
+              src = "https://engineering-shiny.org/"
+            ),
+            bs4ListGroupItem(
+              "Blog",
+              type = "action",
+              src = "https://colinfay.me"
+            ),
+            bs4ListGroupItem(
+              "Twitter: @_colinfay",
+              type = "action",
+              src = "https://twitter.com/_colinfay"
+            ),
+            bs4ListGroupItem(
+              "Github: ColinFay",
+              type = "action",
+              src = "https://github.com/ColinFay"
+            )
+          )
+        )
+      ),
+      col_3(
         bs4UserCard(
           title = "Carson Sievert",
           subtitle = "plotly package author",
@@ -183,7 +215,7 @@ mod_welcome_ui <- function(id){
           )
         )
       ),
-      col_4(
+      col_3(
         bs4UserCard(
           title = "John (JP) Coene",
           subtitle = "waiter & tippy package author",
