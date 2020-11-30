@@ -11,7 +11,7 @@
 #' @import sortable
 #' @import metamer
 #' @import dplyr
-mod_animate_ui <- function(id){
+mod_animate_ui <- function(id) {
   ns <- NS(id)
   
   ds_choices <- unique(datasauRus::datasaurus_dozen$dataset)

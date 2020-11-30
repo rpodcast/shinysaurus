@@ -28,7 +28,7 @@ render_animation_graph <- function(metamer_df, metamer_sum, frame = 100) {
       xaxis = list(range = c(0, 100)),
       yaxis = list(range = c(0, 100))
     )
-  
+
   base %>%
     animation_opts(frame = frame, easing = "linear", redraw = FALSE) %>%
     animation_button(
